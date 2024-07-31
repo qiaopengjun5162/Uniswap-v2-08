@@ -9,22 +9,10 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20FlashMint.sol";
 
-contract UniswapV2ERC20 is
-    ERC20,
-    ERC20Burnable,
-    ERC20Pausable,
-    Ownable,
-    ERC20Permit,
-    ERC20Votes
+contract UniswapV2ERC20 is ERC20, ERC20Burnable, ERC20Pausable, Ownable, ERC20Permit, ERC20Votes {
     // ERC20FlashMint
-{
-    constructor(
-        address initialOwner
-    )
-        ERC20("Uniswap V2", "UNI-V2")
-        Ownable(initialOwner)
-        ERC20Permit("Uniswap V2")
-    {}
+
+    constructor(address initialOwner) ERC20("Uniswap V2", "UNI-V2") Ownable(initialOwner) ERC20Permit("Uniswap V2") {}
 
     function pause() public onlyOwner {
         _pause();
@@ -40,17 +28,11 @@ contract UniswapV2ERC20 is
 
     // The following functions are overrides required by Solidity.
 
-    function _update(
-        address from,
-        address to,
-        uint256 value
-    ) internal override(ERC20, ERC20Pausable, ERC20Votes) {
+    function _update(address from, address to, uint256 value) internal override(ERC20, ERC20Pausable, ERC20Votes) {
         super._update(from, to, value);
     }
 
-    function nonces(
-        address owner
-    ) public view override(ERC20Permit, Nonces) returns (uint256) {
+    function nonces(address owner) public view override(ERC20Permit, Nonces) returns (uint256) {
         return super.nonces(owner);
     }
 }

@@ -15,23 +15,17 @@ contract UniswapV2Factory is IUniswapV2Factory {
         feeToSetter = _feeToSetter;
     }
 
-    function allPairsLength() external view returns (uint) {
+    function allPairsLength() external view returns (uint256) {
         return allPairs.length;
     }
 
-    function createPair(
-        address tokenA,
-        address tokenB
-    ) external returns (address pair) {
+    function createPair(address tokenA, address tokenB) external returns (address pair) {
         require(tokenA != tokenB, "UniswapV2: IDENTICAL_ADDRESSES");
-        (address token0, address token1) = tokenA < tokenB
-            ? (tokenA, tokenB)
-            : (tokenB, tokenA);
+        // 用于交换两个地址的值的，根据地址tokenA和tokenB的大小关系来决定交换的顺序。
+        // 如果tokenA在tokenB之前，那么它们将被交换。否则，它们将保持不变。
+        (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
         require(token0 != address(0), "UniswapV2: ZERO_ADDRESS");
-        require(
-            getPair[token0][token1] == address(0),
-            "UniswapV2: PAIR_EXISTS"
-        ); // single check is sufficient
+        require(getPair[token0][token1] == address(0), "UniswapV2: PAIR_EXISTS"); // single check is sufficient
         bytes memory bytecode = type(UniswapV2Pair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         assembly {
