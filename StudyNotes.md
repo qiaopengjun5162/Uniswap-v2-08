@@ -56,3 +56,113 @@ gas费超了，超过了最多允许的800万了，所以要分成两个合约
 ### UniswapV2Factory
 
 - <https://etherscan.io/address/0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f#code>
+
+## 部署
+
+### 1. 部署 UniswapV2Factory
+
+```shell
+
+Uniswap-v2-08 on  main [!?] via 🅒 base took 4.4s 
+➜ source .env       
+
+Uniswap-v2-08 on  main [!?] via 🅒 base 
+➜ forge script --chain sepolia UniswapV2FactoryScript --rpc-url $SEPOLIA_RPC_URL --account MetaMask --broadcast --verify -vvvv  
+
+[⠢] Compiling...
+No files changed, compilation skipped
+Traces:
+  [3605199] UniswapV2FactoryScript::run()
+    ├─ [0] VM::envUint("PRIVATE_KEY") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] VM::addr(<pk>) [staticcall]
+    │   └─ ← [Return] 0x750Ea21c1e98CcED0d4557196B6f4a5974CCB6f5
+    ├─ [0] console::log("Deploying contracts with the account:", 0x750Ea21c1e98CcED0d4557196B6f4a5974CCB6f5) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::startBroadcast(<pk>)
+    │   └─ ← [Return] 
+    ├─ [3555307] → new UniswapV2Factory@0x3bec93Bc058ad0020b681ADb95Ef491CDc0Cb019
+    │   └─ ← [Return] 17645 bytes of code
+    ├─ [0] console::log("UniswapV2Factory deployed to:") [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log(UniswapV2Factory: [0x3bec93Bc058ad0020b681ADb95Ef491CDc0Cb019]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] VM::stopBroadcast()
+    │   └─ ← [Return] 
+    └─ ← [Stop] 
+
+
+Script ran successfully.
+
+== Logs ==
+  Deploying contracts with the account: 0x750Ea21c1e98CcED0d4557196B6f4a5974CCB6f5
+  UniswapV2Factory deployed to:
+  0x3bec93Bc058ad0020b681ADb95Ef491CDc0Cb019
+
+## Setting up 1 EVM.
+==========================
+Simulated On-chain Traces:
+
+  [3555307] → new UniswapV2Factory@0x3bec93Bc058ad0020b681ADb95Ef491CDc0Cb019
+    └─ ← [Return] 17645 bytes of code
+
+
+==========================
+
+Chain 11155111
+
+Estimated gas price: 21.103078717 gwei
+
+Estimated total gas used for script: 5049744
+
+Estimated amount required: 0.106565145132698448 ETH
+
+==========================
+Enter keystore password:
+
+##### sepolia
+✅  [Success]Hash: 0x4a5039ceeb896fa53b10822c595bcf70464fd7e5bf29c4d09fd050c89dfaa5d4
+Contract Address: 0x3bec93Bc058ad0020b681ADb95Ef491CDc0Cb019
+Block: 6409957
+Paid: 0.039962698869717756 ETH (3885533 gas * 10.284997932 gwei)
+
+✅ Sequence #1 on sepolia | Total Paid: 0.039962698869717756 ETH (3885533 gas * avg 10.284997932 gwei)
+                                                                                                                                                               
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+##
+Start verification for (1) contracts
+Start verifying contract `0x3bec93Bc058ad0020b681ADb95Ef491CDc0Cb019` deployed on sepolia
+
+Submitting verification for [src/UniswapV2Factory.sol:UniswapV2Factory] 0x3bec93Bc058ad0020b681ADb95Ef491CDc0Cb019.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `ffldunmqwawvglyijmmhbtwb3biglhb2gkrxzt9lbqjfciruq2`
+        URL: https://sepolia.etherscan.io/address/0x3bec93bc058ad0020b681adb95ef491cdc0cb019
+Contract verification status:
+Response: `NOTOK`
+Details: `Pending in queue`
+Contract verification status:
+Response: `OK`
+Details: `Pass - Verified`
+Contract successfully verified
+All (1) contracts were verified!
+
+Transactions saved to: /Users/qiaopengjun/Code/solidity-code/Uniswap-v2-08/broadcast/UniswapV2Factory.s.sol/11155111/run-latest.json
+
+Sensitive values saved to: /Users/qiaopengjun/Code/solidity-code/Uniswap-v2-08/cache/UniswapV2Factory.s.sol/11155111/run-latest.json
+
+
+```
+
+## 修改替换 UniswapV2Library.sol 中 pairFor 中的 hash
+
+- <https://eips.ethereum.org/EIPS/eip-1014>
+
+```solidity
+bytes32 hash = keccak256(abi.encodePacked(bytecode));
+console.logBytes32("hash: ");
+console.logBytes32(hash);
+```
