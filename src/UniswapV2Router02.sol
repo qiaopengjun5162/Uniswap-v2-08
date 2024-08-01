@@ -7,7 +7,6 @@ import "./libraries/UniswapV2Library.sol";
 import "./libraries/TransferHelper.sol";
 import "./interfaces/IERC20.sol";
 import "./interfaces/IWETH.sol";
-
 import "./libraries/SafeMath.sol";
 
 contract UniswapV2Router02 is IUniswapV2Router02 {
@@ -39,12 +38,21 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         uint256 amountAMin,
         uint256 amountBMin
     ) internal virtual returns (uint256 amountA, uint256 amountB) {
+        console.log("tokenB: ", tokenB);
+        console.log("tokenA: ", tokenA);
+        console.log("amountBDesired: ", amountBDesired);
+        console.log("amountAMin: ", amountAMin);
+
         // create the pair if it doesn't exist yet
         if (IUniswapV2Factory(factory).getPair(tokenA, tokenB) == address(0)) {
             IUniswapV2Factory(factory).createPair(tokenA, tokenB);
         }
+        console.log("amountBMin: ", amountBMin);
         (uint256 reserveA, uint256 reserveB) = UniswapV2Library.getReserves(factory, tokenA, tokenB);
+        console.log("reserveA: ", reserveA);
+        console.log("reserveB: ", reserveB);
         if (reserveA == 0 && reserveB == 0) {
+            console.log("reserveB: ", reserveB);
             (amountA, amountB) = (amountADesired, amountBDesired);
         } else {
             uint256 amountBOptimal = UniswapV2Library.quote(amountADesired, reserveA, reserveB);
@@ -94,11 +102,16 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
     {
         (amountToken, amountETH) =
             _addLiquidity(token, WETH, amountTokenDesired, msg.value, amountTokenMin, amountETHMin);
+        console.log("amountETH: ", amountETH);
+
         address pair = UniswapV2Library.pairFor(factory, token, WETH);
+        console.log("pair: ", pair);
         TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken);
         IWETH(WETH).deposit{value: amountETH}();
         assert(IWETH(WETH).transfer(pair, amountETH));
+        console.log("amountETH2222: ", amountETH);
         liquidity = IUniswapV2Pair(pair).mint(to);
+        console.log("liquidity1111: ", liquidity);
         // refund dust eth, if any
         if (msg.value > amountETH) {
             TransferHelper.safeTransferETH(msg.sender, msg.value - amountETH);
@@ -116,7 +129,9 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         uint256 deadline
     ) public virtual override ensure(deadline) returns (uint256 amountA, uint256 amountB) {
         address pair = UniswapV2Library.pairFor(factory, tokenA, tokenB);
+        console.log("removeLiquidity111, liquidity", liquidity, pair);
         IUniswapV2Pair(pair).transferFrom(msg.sender, pair, liquidity); // send liquidity to pair
+        console.log("removeLiquidity");
         (uint256 amount0, uint256 amount1) = IUniswapV2Pair(pair).burn(to);
         (address token0,) = UniswapV2Library.sortTokens(tokenA, tokenB);
         (amountA, amountB) = tokenA == token0 ? (amount0, amount1) : (amount1, amount0);
@@ -227,12 +242,21 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
             (uint256 amount0Out, uint256 amount1Out) =
                 input == token0 ? (uint256(0), amountOut) : (amountOut, uint256(0));
             address to = i < path.length - 2 ? UniswapV2Library.pairFor(factory, output, path[i + 2]) : _to;
+            console.log("_swap: ", amount0Out, amount1Out);
             IUniswapV2Pair(UniswapV2Library.pairFor(factory, input, output)).swap(
                 amount0Out, amount1Out, to, new bytes(0)
             );
         }
     }
 
+    /*
+     * @dev Swaps exact amount of tokens for tokens
+     * @param amountIn
+     * @param amountOutMin
+     * @param path 由前端代码计算出的最短路径
+     * @param to
+     * @param deadline 最后期限
+     */
     function swapExactTokensForTokens(
         uint256 amountIn,
         uint256 amountOutMin,
@@ -240,14 +264,25 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         address to,
         uint256 deadline
     ) external virtual override ensure(deadline) returns (uint256[] memory amounts) {
+        // amountIn * 997 * reserveOut / reserveIn * 1000 + amountIn * 997
         amounts = UniswapV2Library.getAmountsOut(factory, amountIn, path);
         require(amounts[amounts.length - 1] >= amountOutMin, "UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT");
+        //从路径中的第一个token中向UniswapV2Library.pairFor(factory, path[0], path[1])合约转账amounts[0]
         TransferHelper.safeTransferFrom(
             path[0], msg.sender, UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]
         );
+        //执行swap操作
         _swap(amounts, path, to);
     }
 
+    /**
+     * @dev 交换token，接收到的token数量为amountOut 给出输出求输入
+     * @param amountOut 需要接收到的token数量
+     * @param amountInMax 最多可以支付的token数量
+     * @param path 由前端代码计算出的最短路径
+     * @param to destination address
+     * @param deadline 最后期限
+     */
     function swapTokensForExactTokens(
         uint256 amountOut,
         uint256 amountInMax,
@@ -263,6 +298,14 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         _swap(amounts, path, to);
     }
 
+    /**
+     * @dev 交换token 给出ETH输入求输出  所以方法是 payable
+     * @param amountOutMin 最小输出数额
+     * @param path 路径数组
+     * @param to destination address
+     * @param deadline 最后期限
+     * @return amounts 数组
+     */
     function swapExactETHForTokens(uint256 amountOutMin, address[] calldata path, address to, uint256 deadline)
         external
         payable
@@ -271,14 +314,29 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         ensure(deadline)
         returns (uint256[] memory amounts)
     {
+        // 检查路径的第一个元素是否为WETH
         require(path[0] == WETH, "UniswapV2Router: INVALID_PATH");
+        // 使用UniswapV2Library计算路径中的金额
         amounts = UniswapV2Library.getAmountsOut(factory, msg.value, path);
+        // 检查最后金额是否大于等于最小输出金额
         require(amounts[amounts.length - 1] >= amountOutMin, "UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT");
+        // 将WETH存入WETH合约
         IWETH(WETH).deposit{value: amounts[0]}();
+        // 将WETH转账到UniswapV2Library.pairFor(factory, path[0], path[1])
         assert(IWETH(WETH).transfer(UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]));
+        console.log("before swap");
+        // 执行交换
         _swap(amounts, path, to);
     }
 
+    /**
+     * @dev 由输出求输入 ETH  先交换再取款
+     * @param amountOut 输出
+     * @param amountInMax 最大输入
+     * @param path 路径
+     * @param to 接收者
+     * @param deadline 截止时间
+     */
     function swapTokensForExactETH(
         uint256 amountOut,
         uint256 amountInMax,
@@ -297,6 +355,14 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         TransferHelper.safeTransferETH(to, amounts[amounts.length - 1]);
     }
 
+    /**
+     * @dev 用ETH换取代币 给输入求输出 先交换后取款
+     * @param amountIn ETH数量
+     * @param amountOutMin 代币数量
+     * @param path 路径
+     * @param to 接收者
+     * @param deadline 截止时间
+     */
     function swapExactTokensForETH(
         uint256 amountIn,
         uint256 amountOutMin,
@@ -315,6 +381,13 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         TransferHelper.safeTransferETH(to, amounts[amounts.length - 1]);
     }
 
+    /**
+     * @dev 用ETH换代币 给输出求输入 输入是 ETH 先存款后交换
+     * @param amountOut 代币数量
+     * @param path 路径
+     * @param to 接收者
+     * @param deadline 截止时间
+     */
     function swapETHForExactTokens(uint256 amountOut, address[] calldata path, address to, uint256 deadline)
         external
         payable

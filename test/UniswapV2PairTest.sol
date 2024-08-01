@@ -35,10 +35,7 @@ contract UniswapV2PairTest is Test {
 
     function testCreatePair() public {
         uniswapv2factory.createPair(address(token0), address(token1));
-        address pairAddress = uniswapv2factory.getPair(
-            address(token0),
-            address(token1)
-        );
+        address pairAddress = uniswapv2factory.getPair(address(token0), address(token1));
         assertEq(uniswapv2factory.allPairsLength(), 1);
         require(pairAddress != address(0), "Pair address is zero");
     }
