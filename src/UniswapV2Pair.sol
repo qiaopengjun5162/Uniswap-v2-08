@@ -123,7 +123,6 @@ contract UniswapV2Pair is UniswapV2ERC20, IUniswapV2Pair {
         uint256 _totalSupply = totalSupply; // gas savings, must be defined here since totalSupply can update in _mintFee
         if (_totalSupply == 0) {
             liquidity = Math.sqrt(amount0 * amount1) - MINIMUM_LIQUIDITY;
-            console.log("liquidity: ", liquidity);
             _mint(address(0), MINIMUM_LIQUIDITY); // permanently lock the first MINIMUM_LIQUIDITY tokens
         } else {
             liquidity = Math.min((amount0 * _totalSupply) / _reserve0, (amount1 * _totalSupply) / _reserve1);
@@ -134,12 +133,10 @@ contract UniswapV2Pair is UniswapV2ERC20, IUniswapV2Pair {
         _update(balance0, balance1, _reserve0, _reserve1);
         if (feeOn) kLast = reserve0 * reserve1; // reserve0 and reserve1 are up-to-date
         emit Mint(msg.sender, amount0, amount1);
-        console.log("realley _update: success");
     }
 
     // this low-level function should be called from a contract which performs important safety checks
     function burn(address to) external lock returns (uint256 amount0, uint256 amount1) {
-        console.log("burn before: to", to);
         (uint112 _reserve0, uint112 _reserve1,) = getReserves(); // gas savings
         address _token0 = token0; // gas savings
         address _token1 = token1; // gas savings

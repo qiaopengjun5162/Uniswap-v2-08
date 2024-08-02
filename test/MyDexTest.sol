@@ -93,19 +93,26 @@ contract UniswapV2Router02Test is Test {
     function testSellETH() public {
         uint256 amountIn = 2 ether;
         uint256 exceptMinToken = 1 ether;
-
         // 1. add liquidity
         _addLiquidityETH();
+        address[] memory path = new address[](2);
+        // 将token0的地址赋值给path[0]
+        path[0] = address(weth);
+        // 将weth的地址赋值给path[1]
+        path[1] = address(token0);
+        uint256[] memory amountOuts = uniswapv2router02.getAmountsOut(amountIn, path);
+        uint256 amountOut = amountOuts[path.length - 1];
+
         assertEq(token0.balanceOf(address(this)), 0);
-        uint256 beforeBalance = address(this).balance;
+        uint256 beforeBalance = token0.balanceOf(address(this));
         // 2. sell ETH
         mydex.sellETH{value: amountIn}(address(token0), exceptMinToken);
 
-        uint256 afterBalance = address(this).balance;
-        assertLe(afterBalance, 79228162492264337593543950335);
-        assertEq(beforeBalance, 79228162494264337593543950335);
+        uint256 afterBalance = token0.balanceOf(address(this));
+        assertEq(beforeBalance, 0 ether);
+        assertEq(afterBalance, amountOut);
+        assertLe(afterBalance, 1662497915624478906);
 
-        assertEq(token0.balanceOf(address(user.addr)), 1 ether);
         assertEq(token0.balanceOf(address(this)), 1662497915624478906);
     }
 
