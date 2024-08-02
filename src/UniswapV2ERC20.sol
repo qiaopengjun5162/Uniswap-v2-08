@@ -43,7 +43,6 @@ contract UniswapV2ERC20 is IUniswapV2ERC20 {
         totalSupply = totalSupply.add(value);
         balanceOf[to] = balanceOf[to].add(value);
         emit Transfer(address(0), to, value);
-        console.log("mint successfully");
     }
 
     function _burn(address from, uint256 value) internal {
@@ -75,8 +74,6 @@ contract UniswapV2ERC20 is IUniswapV2ERC20 {
 
     function transferFrom(address from, address to, uint256 value) external override returns (bool) {
         // if (allowance[from][msg.sender] != uint(-1)) {
-        console.log("transferFrom:");
-        console.log(allowance[from][msg.sender]);
         if (allowance[from][msg.sender] != type(uint256).max) {
             allowance[from][msg.sender] = allowance[from][msg.sender].sub(value);
         }

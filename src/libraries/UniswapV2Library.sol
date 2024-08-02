@@ -30,7 +30,6 @@ library UniswapV2Library {
         // hex"7f88588ebc7bc61b03dfecb4cfa631fec5109b1a2b2ae99ccbf392424d7c5be1" // init code hash
         // 直接从 bytes32 类型转换为 address 类型
         pair = address(uint160(uint256(hash)));
-        console.log("pairFor: ", pair);
     }
 
     // fetches and sorts the reserves for a pair
@@ -39,13 +38,11 @@ library UniswapV2Library {
         view
         returns (uint256 reserveA, uint256 reserveB)
     {
-        console.log("getReserves: ", factory, tokenA, tokenB);
         (address token0,) = sortTokens(tokenA, tokenB);
-        console.log("sorted");
+
         (uint256 reserve0, uint256 reserve1,) = IUniswapV2Pair(pairFor(factory, tokenA, tokenB)).getReserves();
-        console.log("getReserves222: ", reserve0, reserve1);
+
         (reserveA, reserveB) = tokenA == token0 ? (reserve0, reserve1) : (reserve1, reserve0);
-        console.log("getReserves: successful");
     }
 
     // given some amount of an asset and pair reserves, returns an equivalent amount of the other asset

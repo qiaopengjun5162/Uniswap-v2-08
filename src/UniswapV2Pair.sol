@@ -121,9 +121,6 @@ contract UniswapV2Pair is UniswapV2ERC20, IUniswapV2Pair {
 
         bool feeOn = _mintFee(_reserve0, _reserve1);
         uint256 _totalSupply = totalSupply; // gas savings, must be defined here since totalSupply can update in _mintFee
-        console.log("totalSupply: ", _totalSupply);
-        console.log("amount0: ", amount0);
-        console.log("amount1: ", amount1);
         if (_totalSupply == 0) {
             liquidity = Math.sqrt(amount0 * amount1) - MINIMUM_LIQUIDITY;
             console.log("liquidity: ", liquidity);
@@ -135,7 +132,6 @@ contract UniswapV2Pair is UniswapV2ERC20, IUniswapV2Pair {
         _mint(to, liquidity);
 
         _update(balance0, balance1, _reserve0, _reserve1);
-        console.log("_update: success");
         if (feeOn) kLast = reserve0 * reserve1; // reserve0 and reserve1 are up-to-date
         emit Mint(msg.sender, amount0, amount1);
         console.log("realley _update: success");
@@ -150,7 +146,6 @@ contract UniswapV2Pair is UniswapV2ERC20, IUniswapV2Pair {
         uint256 balance0 = IERC20(_token0).balanceOf(address(this));
         uint256 balance1 = IERC20(_token1).balanceOf(address(this));
         uint256 liquidity = balanceOf[address(this)];
-        console.log("burn before: ", _reserve0);
         bool feeOn = _mintFee(_reserve0, _reserve1);
         uint256 _totalSupply = totalSupply; // gas savings, must be defined here since totalSupply can update in _mintFee
         amount0 = (liquidity * balance0) / _totalSupply; // using balances ensures pro-rata distribution
@@ -172,7 +167,6 @@ contract UniswapV2Pair is UniswapV2ERC20, IUniswapV2Pair {
         require(amount0Out > 0 || amount1Out > 0, "UniswapV2: INSUFFICIENT_OUTPUT_AMOUNT");
         (uint112 _reserve0, uint112 _reserve1,) = getReserves(); // gas savings
         require(amount0Out < _reserve0 && amount1Out < _reserve1, "UniswapV2: INSUFFICIENT_LIQUIDITY");
-        console.log("swap before: ");
         uint256 balance0;
         uint256 balance1;
         {
@@ -189,23 +183,18 @@ contract UniswapV2Pair is UniswapV2ERC20, IUniswapV2Pair {
             balance0 = IERC20(_token0).balanceOf(address(this));
             balance1 = IERC20(_token1).balanceOf(address(this));
         }
-        console.log("swap after: ", _reserve0, amount0Out, amount1Out);
         uint256 amount0In = balance0 > _reserve0 - amount0Out ? balance0 - (_reserve0 - amount0Out) : 0;
         uint256 amount1In = balance1 > _reserve1 - amount1Out ? balance1 - (_reserve1 - amount1Out) : 0;
         require(amount0In > 0 || amount1In > 0, "UniswapV2: INSUFFICIENT_INPUT_AMOUNT");
-        console.log("swap after: 11", balance0, amount0In);
         {
             // scope for reserve{0,1}Adjusted, avoids stack too deep errors
             uint256 balance0Adjusted = balance0 * 1000 - amount0In * 3;
             uint256 balance1Adjusted = balance1 * 1000 - amount1In * 3;
-            uint256 requiredValue = reserve0 * reserve1 * 1000 ** 2;
-            console.log("swap after: 222");
+            uint256 requiredValue = uint256(reserve0) * uint256(reserve1) * (1000 ** 2);
             require(balance0Adjusted * balance1Adjusted >= requiredValue, "UniswapV2: K");
         }
-        console.log("_update after: ");
         _update(balance0, balance1, _reserve0, _reserve1);
         emit Swap(msg.sender, amount0In, amount1In, amount0Out, amount1Out, to);
-        console.log("swap successful");
     }
 
     // force balances to match reserves

@@ -38,21 +38,12 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         uint256 amountAMin,
         uint256 amountBMin
     ) internal virtual returns (uint256 amountA, uint256 amountB) {
-        console.log("tokenB: ", tokenB);
-        console.log("tokenA: ", tokenA);
-        console.log("amountBDesired: ", amountBDesired);
-        console.log("amountAMin: ", amountAMin);
-
         // create the pair if it doesn't exist yet
         if (IUniswapV2Factory(factory).getPair(tokenA, tokenB) == address(0)) {
             IUniswapV2Factory(factory).createPair(tokenA, tokenB);
         }
-        console.log("amountBMin: ", amountBMin);
         (uint256 reserveA, uint256 reserveB) = UniswapV2Library.getReserves(factory, tokenA, tokenB);
-        console.log("reserveA: ", reserveA);
-        console.log("reserveB: ", reserveB);
         if (reserveA == 0 && reserveB == 0) {
-            console.log("reserveB: ", reserveB);
             (amountA, amountB) = (amountADesired, amountBDesired);
         } else {
             uint256 amountBOptimal = UniswapV2Library.quote(amountADesired, reserveA, reserveB);
@@ -102,16 +93,12 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
     {
         (amountToken, amountETH) =
             _addLiquidity(token, WETH, amountTokenDesired, msg.value, amountTokenMin, amountETHMin);
-        console.log("amountETH: ", amountETH);
 
         address pair = UniswapV2Library.pairFor(factory, token, WETH);
-        console.log("pair: ", pair);
         TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken);
         IWETH(WETH).deposit{value: amountETH}();
         assert(IWETH(WETH).transfer(pair, amountETH));
-        console.log("amountETH2222: ", amountETH);
         liquidity = IUniswapV2Pair(pair).mint(to);
-        console.log("liquidity1111: ", liquidity);
         // refund dust eth, if any
         if (msg.value > amountETH) {
             TransferHelper.safeTransferETH(msg.sender, msg.value - amountETH);
@@ -129,9 +116,9 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         uint256 deadline
     ) public virtual override ensure(deadline) returns (uint256 amountA, uint256 amountB) {
         address pair = UniswapV2Library.pairFor(factory, tokenA, tokenB);
-        console.log("removeLiquidity111, liquidity", liquidity, pair);
+        console.log("Removing liquidity ", pair);
         IUniswapV2Pair(pair).transferFrom(msg.sender, pair, liquidity); // send liquidity to pair
-        console.log("removeLiquidity");
+        console.log("Removing liquidity from pair: ", pair, liquidity);
         (uint256 amount0, uint256 amount1) = IUniswapV2Pair(pair).burn(to);
         (address token0,) = UniswapV2Library.sortTokens(tokenA, tokenB);
         (amountA, amountB) = tokenA == token0 ? (amount0, amount1) : (amount1, amount0);
@@ -242,7 +229,6 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
             (uint256 amount0Out, uint256 amount1Out) =
                 input == token0 ? (uint256(0), amountOut) : (amountOut, uint256(0));
             address to = i < path.length - 2 ? UniswapV2Library.pairFor(factory, output, path[i + 2]) : _to;
-            console.log("_swap: ", amount0Out, amount1Out);
             IUniswapV2Pair(UniswapV2Library.pairFor(factory, input, output)).swap(
                 amount0Out, amount1Out, to, new bytes(0)
             );
@@ -324,7 +310,6 @@ contract UniswapV2Router02 is IUniswapV2Router02 {
         IWETH(WETH).deposit{value: amounts[0]}();
         // 将WETH转账到UniswapV2Library.pairFor(factory, path[0], path[1])
         assert(IWETH(WETH).transfer(UniswapV2Library.pairFor(factory, path[0], path[1]), amounts[0]));
-        console.log("before swap");
         // 执行交换
         _swap(amounts, path, to);
     }

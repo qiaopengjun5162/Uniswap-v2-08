@@ -9,11 +9,9 @@ contract MyDex {
     using SafeERC20 for IERC20;
 
     IUniswapV2Router02 public uniswapRouter;
-    address public usdtAddress; // USDT 地址
 
-    constructor(address _uniswapRouter, address _usdtAddress) {
+    constructor(address _uniswapRouter) {
         uniswapRouter = IUniswapV2Router02(_uniswapRouter);
-        usdtAddress = _usdtAddress;
     }
 
     /**
@@ -29,7 +27,6 @@ contract MyDex {
         address[] memory path = new address[](2);
         path[0] = uniswapRouter.WETH();
         path[1] = buyToken;
-        IERC20(buyToken).approve(address(uniswapRouter), minBuyAmount);
 
         uniswapRouter.swapExactETHForTokens{value: msg.value}(minBuyAmount, path, msg.sender, block.timestamp + 1000);
     }
@@ -42,15 +39,29 @@ contract MyDex {
      */
     function buyETH(address sellToken, uint256 sellAmount, uint256 minBuyAmount) external {
         require(sellAmount > 0, "Must specify amount to sell");
+        // 1. 检查 sellToken 地址是否有效
+        require(sellToken != address(0), "Sell token address must not be zero");
+        // 2. 检查 minBuyAmount 是否大于0
+        require(minBuyAmount > 0, "Min buy amount must be greater than 0");
 
+        // 3. 检查 sellToken 是否是 ERC20 代币
+        IERC20(sellToken).approve(address(uniswapRouter), sellAmount);
+
+        // 4. 检查 sellToken 的余额是否足够
+        require(IERC20(sellToken).balanceOf(msg.sender) >= sellAmount, "Insufficient sell token balance");
+        // 5. 从 msg.sender 转移 sellAmount 的 sellToken 到合约
         IERC20(sellToken).safeTransferFrom(msg.sender, address(this), sellAmount);
 
         address[] memory path = new address[](2);
         path[0] = sellToken;
         path[1] = uniswapRouter.WETH();
-
-        IERC20(sellToken).approve(address(uniswapRouter), sellAmount);
-
+        // 6. Token 授权给 Uniswap Router 合约
+        // IERC20(sellToken).approve(address(uniswapRouter), sellAmount);
+        // 如果没有足额的授权，则进行一次最大额度的授权
+        if (IERC20(sellToken).allowance(address(this), address(uniswapRouter)) < sellAmount) {
+            IERC20(sellToken).approve(address(uniswapRouter), type(uint256).max);
+        }
+        // 7. 调用 Uniswap Router 合约的 swapExactTokensForETH 函数，将 sellToken 换成 ETH
         uniswapRouter.swapExactTokensForETH(sellAmount, minBuyAmount, path, msg.sender, block.timestamp);
     }
 
