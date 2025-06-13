@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.30;
 
 import {Test, console} from "forge-std/Test.sol";
 import {UniswapV2Router02} from "../src/UniswapV2Router02.sol";
@@ -116,7 +116,7 @@ contract UniswapV2Router02Test is Test {
         assertEq(token0.balanceOf(address(this)), 1662497915624478906);
     }
 
-    function testbuyETH() public {
+    function testBuyETH() public {
         uint256 amountIn = 1e18;
         // 1. add liquidity
         _addLiquidityETH();

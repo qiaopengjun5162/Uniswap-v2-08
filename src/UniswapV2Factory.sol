@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.30;
 
 import "./interfaces/IUniswapV2Factory.sol";
 import "./UniswapV2Pair.sol";
@@ -27,9 +27,10 @@ contract UniswapV2Factory is IUniswapV2Factory {
         require(token0 != address(0), "UniswapV2: ZERO_ADDRESS");
         require(getPair[token0][token1] == address(0), "UniswapV2: PAIR_EXISTS"); // single check is sufficient
         //  用于获取 UniswapV2Pair 合约的创建字节码。这是一个智能合约编译器生成的字节码，用于在部署合约时初始化合约的代码。
+        //  bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(UniswapV2Pair).creationCode));
         bytes memory bytecode = type(UniswapV2Pair).creationCode;
         bytes32 hash = keccak256(abi.encodePacked(bytecode));
-        console.logBytes32("hash: ");
+        console.log("hash: ");
         console.logBytes32(hash);
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         // CREATE2 是以太坊虚拟机 (EVM) 引入的一个 opcode，用于在智能合约中创建新合约。

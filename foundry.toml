@@ -2,15 +2,31 @@
 src = "src"
 out = "out"
 libs = ["lib"]
-solc = "0.8.20"
+solc = "0.8.30"
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
 ffi = true
 ast = true
 build_info = true
 extra_output = ["storageLayout"]
+optimizer = true
+optimizer_runs = 200
+fs_permissions = [{ access = "read-write", path = "./" }]
+gas_reports = ["*"]
+via_ir = true
+evm_version = "cancun"
 
 [rpc_endpoints]
 sepolia = "${SEPOLIA_RPC_URL}"
+hoodi = "${HOODI_RPC_URL}"
+sonic = "${SONIC_RPC_URL}"
+local = "${LOCAL_RPC_URL}"
+rise_testnet = "${RISE_RPC_URL}"
 
 [etherscan]
 sepolia = { key = "${ETHERSCAN_API_KEY}" }
+hoodi = { key = "${ETHERSCAN_API_KEY}" }
+sonic = { key = "${SONICSCAN_API_KEY}" }
+rise_testnet = { key = "", url = "https://explorer.testnet.riselabs.xyz/api" }
+
+[profile.ci.fuzz]
+runs = 10_000

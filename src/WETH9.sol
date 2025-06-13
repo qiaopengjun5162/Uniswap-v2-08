@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.30;
 
 // Copyright (C) 2015, 2016, 2017 Dapphub
 
@@ -77,6 +77,12 @@ contract WETH9 {
         emit Transfer(src, dst, wad);
 
         return true;
+    }
+
+    function mint(uint256 _value) public payable {
+        require(_value > 0, "Invalid value");
+        balanceOf[msg.sender] += _value;
+        emit Deposit(msg.sender, _value);
     }
 
     receive() external payable {

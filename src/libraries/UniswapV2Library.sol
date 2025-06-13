@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.30;
 
 import "../interfaces/IUniswapV2Pair.sol";
-
 import "./SafeMath.sol";
 import "../UniswapV2Pair.sol";
 import {Test, console} from "forge-std/Test.sol";
@@ -27,7 +26,7 @@ library UniswapV2Library {
                 hex"ff", factory, keccak256(abi.encodePacked(token0, token1)), keccak256(abi.encodePacked(bytecode))
             )
         );
-        // hex"7f88588ebc7bc61b03dfecb4cfa631fec5109b1a2b2ae99ccbf392424d7c5be1" // init code hash
+        // hex"0xd59a4b7a3d30d8afd9bba1a80fac80da0785face48d391ee6bc9535a907f0e0e" // init code hash
         // 直接从 bytes32 类型转换为 address 类型
         pair = address(uint160(uint256(hash)));
     }
