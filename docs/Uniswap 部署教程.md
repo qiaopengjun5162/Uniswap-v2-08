@@ -627,7 +627,164 @@ Sensitive values saved to: /Users/qiaopengjun/Code/Solidity/Uniswap-v2-08/cache/
 
 https://hoodi.etherscan.io/address/0x7ad0921d80cefc98889a84b960c74866a452cc2a#code
 
+合约地址：0x7AD0921D80CeFC98889a84B960c74866A452Cc2A
 
+## 添加流动性
+
+第一次添加流动性失败 
+
+https://hoodi.etherscan.io/tx/0x25534db2bb5772354dd2bb1b8ba688a3b9e880eac65531e63df35cbd3f8cd3c7
+
+第二次添加流动性
+
+approve
+
+AToken : https://hoodi.etherscan.io/tx/0xd303f1ed4441fea65dc978edaf505c7b4c58354f8ee7fd28f9c4d47bebcc4753
+
+BToken: https://hoodi.etherscan.io/tx/0x883ca598e6541e3bb02ff6866db907c8022d9b73454caa585060d28491f95b5c
+
+
+
+添加流动性：https://hoodi.etherscan.io/tx/0x779e949796640f8b916296d578c5772fd03e78dedaca8fa5a3718b3ac5a47fde
+
+https://hoodi.etherscan.io/tx/0x82c3aa88fb8fed3765b39802f5298b049cf831baa786e631a24cd151c6cc1f30
+
+## 移除流动性
+
+
+
+```bash
+export const INIT_CODE_HASH = '0xd59a4b7a3d30d8afd9bba1a80fac80da0785face48d391ee6bc9535a907f0e0e'
+
+```
+
+
+
+
+
+### 部署 Multicall 合约
+
+```bash
+Uniswap-v2-08 on  main [!] on 🐳 v28.2.2 (orbstack) took 6.1s 
+➜ forge build                                                 
+[⠒] Compiling...
+[⠃] Compiling 3 files with Solc 0.8.30
+[⠊] Solc 0.8.30 finished in 743.59ms
+Compiler run successful!
+
+Uniswap-v2-08 on  main [!?] on 🐳 v28.2.2 (orbstack) 
+➜ source .env       
+
+Uniswap-v2-08 on  main [!?] on 🐳 v28.2.2 (orbstack) 
+➜ forge script MulticallScript --rpc-url $HOODI_RPC_URL --broadcast --verify -vvvvv        
+[⠒] Compiling...
+No files changed, compilation skipped
+Traces:
+  [132] MulticallScript::setUp()
+    └─ ← [Stop]
+
+  [285769] MulticallScript::run()
+    ├─ [0] VM::envUint("PRIVATE_KEY") [staticcall]
+    │   └─ ← [Return] <env var value>
+    ├─ [0] VM::addr(<pk>) [staticcall]
+    │   └─ ← [Return] 0xE91e2DF7cE50BCA5310b7238F6B1Dfcd15566bE5
+    ├─ [0] console::log("Deploying contracts with the account:", 0xE91e2DF7cE50BCA5310b7238F6B1Dfcd15566bE5) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] VM::startBroadcast(<pk>)
+    │   └─ ← [Return]
+    ├─ [237082] → new Multicall@0x40a973af60308BEd36964D554A5c644173bc3CbA
+    │   └─ ← [Return] 1184 bytes of code
+    ├─ [0] console::log("Multicall deployed to:", Multicall: [0x40a973af60308BEd36964D554A5c644173bc3CbA]) [staticcall]
+    │   └─ ← [Stop]
+    ├─ [0] VM::toString(0xE91e2DF7cE50BCA5310b7238F6B1Dfcd15566bE5) [staticcall]
+    │   └─ ← [Return] "0xE91e2DF7cE50BCA5310b7238F6B1Dfcd15566bE5"
+    ├─ [0] VM::toString(Multicall: [0x40a973af60308BEd36964D554A5c644173bc3CbA]) [staticcall]
+    │   └─ ← [Return] "0x40a973af60308BEd36964D554A5c644173bc3CbA"
+    ├─ [0] VM::writeJson("{\"deployerAddress\": \"0xE91e2DF7cE50BCA5310b7238F6B1Dfcd15566bE5\", \"Multicall\": \"0x40a973af60308BEd36964D554A5c644173bc3CbA\"}", "./deployments/Multicall.json")
+    │   └─ ← [Return]
+    ├─ [0] VM::stopBroadcast()
+    │   └─ ← [Return]
+    └─ ← [Return]
+
+
+Script ran successfully.
+
+== Logs ==
+  Deploying contracts with the account: 0xE91e2DF7cE50BCA5310b7238F6B1Dfcd15566bE5
+  Multicall deployed to: 0x40a973af60308BEd36964D554A5c644173bc3CbA
+
+## Setting up 1 EVM.
+==========================
+Simulated On-chain Traces:
+
+  [237082] → new Multicall@0x40a973af60308BEd36964D554A5c644173bc3CbA
+    └─ ← [Return] 1184 bytes of code
+
+
+==========================
+
+Chain 560048
+
+Estimated gas price: 2.231091742 gwei
+
+Estimated total gas used for script: 401811
+
+Estimated amount required: 0.000896477203944762 ETH
+
+==========================
+
+##### hoodi
+✅  [Success] Hash: 0x0f9bc647032f267e3c54ab2ae154e509bc6054bf2986388ad4d8ca9c4fe3d33a
+Contract Address: 0x40a973af60308BEd36964D554A5c644173bc3CbA
+Block: 626316
+Paid: 0.000349097648801688 ETH (309086 gas * 1.129451508 gwei)
+
+✅ Sequence #1 on hoodi | Total Paid: 0.000349097648801688 ETH (309086 gas * avg 1.129451508 gwei)
+                                                                                                                                              
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+##
+Start verification for (1) contracts
+Start verifying contract `0x40a973af60308BEd36964D554A5c644173bc3CbA` deployed on hoodi
+EVM version: cancun
+Compiler version: 0.8.30
+Optimizations:    200
+
+Submitting verification for [src/Multicall.sol:Multicall] 0x40a973af60308BEd36964D554A5c644173bc3CbA.
+Warning: Could not detect the deployment.; waiting 5 seconds before trying again (4 tries remaining)
+
+Submitting verification for [src/Multicall.sol:Multicall] 0x40a973af60308BEd36964D554A5c644173bc3CbA.
+Warning: Could not detect the deployment.; waiting 5 seconds before trying again (3 tries remaining)
+
+Submitting verification for [src/Multicall.sol:Multicall] 0x40a973af60308BEd36964D554A5c644173bc3CbA.
+Warning: Could not detect the deployment.; waiting 5 seconds before trying again (2 tries remaining)
+
+Submitting verification for [src/Multicall.sol:Multicall] 0x40a973af60308BEd36964D554A5c644173bc3CbA.
+Submitted contract for verification:
+        Response: `OK`
+        GUID: `ytfkfh78ub4tjl1csntxnu3b93gqjyyfk3fudh8s4ni7r6r6fb`
+        URL: https://hoodi.etherscan.io/address/0x40a973af60308bed36964d554a5c644173bc3cba
+Contract verification status:
+Response: `NOTOK`
+Details: `Pending in queue`
+Warning: Verification is still pending...; waiting 15 seconds before trying again (7 tries remaining)
+Contract verification status:
+Response: `OK`
+Details: `Pass - Verified`
+Contract successfully verified
+All (1) contracts were verified!
+
+Transactions saved to: /Users/qiaopengjun/Code/Solidity/Uniswap-v2-08/broadcast/Multicall.s.sol/560048/run-latest.json
+
+Sensitive values saved to: /Users/qiaopengjun/Code/Solidity/Uniswap-v2-08/cache/Multicall.s.sol/560048/run-latest.json
+
+```
+
+https://hoodi.etherscan.io/address/0x40a973af60308bed36964d554a5c644173bc3cba
+
+https://hoodi.etherscan.io/address/0x40a973af60308bed36964d554a5c644173bc3cba#code
 
 
 
@@ -646,8 +803,6 @@ Resolving deltas: 100% (87413/87413), done.
 
 
 
-
-
 ### 克隆 v2-sdk 代码
 
 ```bash
@@ -662,6 +817,85 @@ Resolving deltas: 100% (877/877), done.
 ```
 
 
+
+```bash
+sdks/sdks/v2-sdk on  main [⇡] is 📦 1.0.0 via ⬢ v23.11.0 on 🐳 v28.2.2 (orbstack) 
+➜ pnpm build && pnpm publish --no-provenance
+
+> @paxon/v2-sdk@1.0.0 build /Users/qiaopengjun/Code/Solidity/sdks/sdks/v2-sdk
+> tsdx build
+
+@rollup/plugin-replace: 'preventAssignment' currently defaults to false. It is recommended to set this option to `true`, as the next major version will default this option to `true`.
+@rollup/plugin-replace: 'preventAssignment' currently defaults to false. It is recommended to set this option to `true`, as the next major version will default this option to `true`.
+✓ Creating entry file 175 ms
+✓ Building modules 1.1 secs
+npm notice
+npm notice 📦  @paxon/v2-sdk@1.0.0
+npm notice Tarball Contents
+npm notice 1.1kB LICENSE
+npm notice 432B README.md
+npm notice 762B dist/constants.d.ts
+npm notice 77B dist/entities/index.d.ts
+npm notice 8.2kB dist/entities/pair.d.ts
+npm notice 457B dist/entities/route.d.ts
+npm notice 6.5kB dist/entities/trade.d.ts
+npm notice 640B dist/errors.d.ts
+npm notice 170B dist/index.d.ts
+npm notice 190B dist/index.js
+npm notice 2.2kB dist/router.d.ts
+npm notice 43.8kB dist/v2-sdk.cjs.development.js
+npm notice 73.0kB dist/v2-sdk.cjs.development.js.map
+npm notice 15.3kB dist/v2-sdk.cjs.production.min.js
+npm notice 59.6kB dist/v2-sdk.cjs.production.min.js.map
+npm notice 44.8kB dist/v2-sdk.esm.js
+npm notice 74.1kB dist/v2-sdk.esm.js.map
+npm notice 2.1kB package.json
+npm notice Tarball Details
+npm notice name: @paxon/v2-sdk
+npm notice version: 1.0.0
+npm notice filename: paxon-v2-sdk-1.0.0.tgz
+npm notice package size: 75.7 kB
+npm notice unpacked size: 333.4 kB
+npm notice shasum: c7837292143b6885e827ca13c09626d7dd92a19c
+npm notice integrity: sha512-fA0fWnxBzTw6U[...]Vgr4sXOQcM+Ow==
+npm notice total files: 18
+npm notice
+npm notice Publishing to https://registry.npmjs.org/ with tag latest and public access
+Authenticate your account at:
+https://www.npmjs.com/auth/cli/31030d4b-08e7-455d-b1b3-f55c20ef73c2
+Press ENTER to open in the browser...
+
++ @paxon/v2-sdk@1.0.0
+
+
+sdks/sdks/v2-sdk on  main [⇡] is 📦 1.0.0 via ⬢ v23.11.0 on 🐳 v28.2.2 (orbstack) took 3.3s 
+➜ pnpm view @paxon/v2-sdk         
+npm warn Ignoring workspaces for specified package(s)
+
+@paxon/v2-sdk@1.0.0 | MIT | deps: 7 | versions: 1
+🛠 An SDK for building applications on top of Uniswap V2
+https://github.com/Uniswap/sdks#readme
+
+keywords: uniswap, ethereum
+
+dist
+.tarball: https://registry.npmjs.org/@paxon/v2-sdk/-/v2-sdk-1.0.0.tgz
+.shasum: c7837292143b6885e827ca13c09626d7dd92a19c
+.integrity: sha512-fA0fWnxBzTw6UaPHkfMwDdv1NjEB3trqsh5cd589nb2e8kov3Cr3CXhMkyZYPIENw0r01HoN0Vgr4sXOQcM+Ow==
+.unpackedSize: 333.4 kB
+
+dependencies:
+@ethersproject/address: ^5.0.2   @ethersproject/solidity: ^5.0.9  jsbi: ^4.3.2                     tiny-warning: ^1.0.3             
+@ethersproject/bignumber: ^5.8.0 @uniswap/sdk-core: ^7.7.1        tiny-invariant: ^1.1.0           
+
+maintainers:
+- paxon <qiaopengjun0@gmail.com>
+
+dist-tags:
+latest: 1.0.0  
+
+published a minute ago by paxon <qiaopengjun0@gmail.com>
+```
 
 
 
